@@ -14,6 +14,15 @@ export type WatchListing = {
   updated_at: string;
 };
 
+export type WatchListingImage = {
+  id: string;
+  listing_id: string;
+  object_path: string;
+  position: number;
+  alt_text: string;
+  created_at: string;
+};
+
 type WatchListingInsert = Omit<WatchListing, "id" | "created_at" | "updated_at"> & {
   id?: string;
   created_at?: string;
@@ -34,6 +43,23 @@ export type Database = {
         Insert: WatchListingInsert;
         Update: Partial<WatchListingInsert>;
         Relationships: [];
+      };
+      watch_listing_images: {
+        Row: WatchListingImage;
+        Insert: Omit<WatchListingImage, "id" | "created_at"> & {
+          id?: string;
+          created_at?: string;
+        };
+        Update: Partial<Omit<WatchListingImage, "id" | "created_at">>;
+        Relationships: [
+          {
+            foreignKeyName: "watch_listing_images_listing_id_fkey";
+            columns: ["listing_id"];
+            isOneToOne: false;
+            referencedRelation: "watch_listings";
+            referencedColumns: ["id"];
+          },
+        ];
       };
     };
     Views: Record<string, never>;

@@ -45,7 +45,8 @@ a:focus-visible {
 
 button:focus-visible,
 input:focus-visible,
-textarea:focus-visible {
+textarea:focus-visible,
+select:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
@@ -491,6 +492,66 @@ textarea:focus-visible {
   white-space: pre-wrap;
 }
 
+.brand-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.brand-filter label {
+  color: #55564f;
+  font-size: 12px;
+}
+
+.brand-filter select {
+  min-height: 42px;
+  min-width: 180px;
+  padding: 0 34px 0 12px;
+  border: 1px solid #c7c4bb;
+  border-radius: 0;
+  background: var(--paper-light);
+  color: var(--ink);
+  font: inherit;
+  font-size: 12px;
+}
+
+.brand-filter .button-secondary {
+  min-height: 42px;
+}
+
+.listing-photo-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  margin: -25px -25px 22px;
+  overflow: hidden;
+  background: #e9e7e0;
+}
+
+.listing-photo-gallery img {
+  width: 100%;
+  height: 84px;
+  object-fit: cover;
+}
+
+.listing-photo-gallery .listing-photo-primary {
+  height: 225px;
+  grid-column: 1 / -1;
+}
+
+.listing-photo-placeholder {
+  display: grid;
+  min-height: 225px;
+  margin: -25px -25px 22px;
+  place-items: center;
+  background: #e9e7e0;
+  color: #77786f;
+  font-family: var(--serif);
+  font-size: 18px;
+}
+
 .admin-page {
   width: min(100% - 48px, 1120px);
 }
@@ -555,6 +616,82 @@ textarea:focus-visible {
   min-height: 130px;
   resize: vertical;
   line-height: 1.6;
+}
+
+.listing-photo-editor {
+  display: grid;
+  gap: 11px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.listing-photo-editor h3 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.listing-photo-editor > p {
+  margin: 0;
+  color: #6a6b64;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.admin-form input[type="file"] {
+  min-height: 0;
+  padding: 9px;
+  font-size: 12px;
+}
+
+.admin-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.admin-photo {
+  display: grid;
+  min-width: 0;
+  gap: 7px;
+}
+
+.admin-photo img,
+.admin-photo-missing {
+  width: 100%;
+  height: 92px;
+  object-fit: cover;
+  background: #e9e7e0;
+}
+
+.admin-photo-missing {
+  display: grid;
+  place-items: center;
+  color: #77786f;
+  font-size: 10px;
+}
+
+.admin-photo-removed img {
+  opacity: 0.35;
+}
+
+.selected-photo-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.selected-photo-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #6a6b64;
+  font-size: 11px;
 }
 
 .button-primary,
@@ -872,6 +1009,20 @@ textarea:focus-visible {
   .managed-listing,
   .admin-panel {
     padding: 21px;
+  }
+
+  .listing-photo-gallery {
+    margin: -21px -21px 19px;
+  }
+
+  .listing-photo-gallery .listing-photo-primary,
+  .listing-photo-placeholder {
+    min-height: 0;
+    height: 190px;
+  }
+
+  .listing-photo-placeholder {
+    margin: -21px -21px 19px;
   }
 
   .form-row {

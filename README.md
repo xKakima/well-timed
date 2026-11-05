@@ -29,26 +29,34 @@ Open [http://localhost:3000](http://localhost:3000).
 1. In Vercel, set `NEXT_PUBLIC_SUPABASE_URL` and
    `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` for the environments you deploy. The
    legacy `NEXT_PUBLIC_SUPABASE_ANON_KEY` name is also supported.
-2. Apply [`supabase/migrations/20261106100000_watch_listings_and_admins.sql`](./supabase/migrations/20261106100000_watch_listings_and_admins.sql)
-   to your Supabase project from its SQL Editor, then redeploy the app.
-3. In Supabase Authentication, create an administrator user with an email and
+2. Apply the migrations in order in your Supabase project (or run
+   `npx supabase db push` after linking the project):
+   - [`20261106100000_watch_listings_and_admins.sql`](./supabase/migrations/20261106100000_watch_listings_and_admins.sql)
+   - [`20261106110000_watch_listing_photos.sql`](./supabase/migrations/20261106110000_watch_listing_photos.sql)
+3. The photo migration creates a private Storage bucket with admin-only uploads
+   and access to published listing photos. Each listing supports up to six
+   JPEG, PNG, or WebP images, up to 5 MB each. Public photo links are signed and
+   expire after five minutes.
+4. Redeploy the app after the migrations are applied.
+5. In Supabase Authentication, create an administrator user with an email and
    password. Do not enable public sign-ups.
-4. In the Supabase SQL Editor, find that user’s UUID with:
+6. In the Supabase SQL Editor, find that user’s UUID with:
 
    ```sql
    select id from auth.users where email = 'your-admin@example.com';
    ```
 
-5. Add the UUID to the administrator allowlist:
+7. Add the UUID to the administrator allowlist:
 
    ```sql
    insert into public.admin_users (user_id)
    values ('paste-the-user-uuid-here');
    ```
 
-6. Sign in at `/admin/login`. Only allowlisted accounts can manage listings;
+8. Sign in at `/admin/login`. Only allowlisted accounts can manage listings;
    PostgreSQL row-level security also prevents non-admins from reading drafts
-   or changing listings.
+   or changing listings. Add a new brand by entering it in the listing form;
+   the public brand filter updates automatically when that listing is published.
 
 The migration intentionally does not create an administrator account. Never put
 the Supabase `service_role` key in a `NEXT_PUBLIC_` variable or in the browser.

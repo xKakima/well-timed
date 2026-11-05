@@ -130,11 +130,13 @@ Record each decision here before implementing its dependent feature. Proposed de
 
 - [ ] Create Supabase configuration and versioned migrations for profiles, watches, auctions, bids, and consignment submissions as required by the approved MVP.
 - [x] Add a versioned watch-listing schema and administrator allowlist migration for the initial catalog/CMS slice.
+- [x] Add private listing photo storage with admin-only uploads and published-listing-only reads.
+- [x] Enforce listing photo count, format, and size limits and maintain photo metadata in the database.
 - [ ] Define foreign keys, deletion behavior, not-null constraints, check constraints, and indexes from actual query patterns.
 - [x] Add Row Level Security (RLS) to watch listings: public users can read published listings; only allowlisted administrators can read drafts or write.
 - [ ] Add RLS to every other table as those tables are introduced.
 - [ ] Ensure profile identity and ownership are tied to the authenticated user, not caller-supplied user IDs.
-- [ ] Configure Storage buckets and policies. Keep consignment uploads private; use controlled access or signed URLs for review.
+- [x] Configure a private listing-photo bucket with published-only public access through short-lived signed URLs; configure private consignment storage when intake is implemented.
 - [ ] Configure local development and seed only non-sensitive sample data.
 - [ ] Generate and commit TypeScript database types from the migration-backed schema.
 - [ ] Add tests or repeatable checks for migration application and important authorization rules.
@@ -151,6 +153,8 @@ Record each decision here before implementing its dependent feature. Proposed de
 
 - [x] Build the responsive public watch catalog with empty and error states.
 - [x] Build an invite-only admin sign-in and listing CMS to create drafts, edit, publish, unpublish, and archive.
+- [x] Let admins upload and remove up to six private photos per watch; show photos only for published listings.
+- [x] Populate public brand filters from published watch listings and allow admins to add brands through listings.
 - [ ] Build server-rendered watch detail pages with canonical metadata and dynamic Open Graph data from approved, public listing content.
 - [ ] Ensure private, pending, and rejected consignment content is never exposed through pages, metadata, APIs, or image URLs.
 - [ ] Add appropriate pagination/filtering based on the approved MVP scope.
