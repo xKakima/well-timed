@@ -129,8 +129,8 @@ export default function Home() {
         </a>
         <nav aria-label="Main navigation" className="main-nav">
           <a href="#approach">Our approach</a>
-          <a className="nav-cta" href="#coming-soon">
-            Discover the collective <span aria-hidden="true">↗</span>
+          <a className="nav-cta" href="/watches">
+            Explore watches <span aria-hidden="true">↗</span>
           </a>
         </nav>
       </header>
@@ -201,8 +201,11 @@ export default function Home() {
           be <em>worth it.</em>
         </h2>
         <p>
-          Well Timed Collective is on its way. We&apos;re taking the time to get it right.
+          Discover the collection and find a timepiece with a story worth telling.
         </p>
+        <a className="text-link" href="/watches">
+          Explore the watches <span aria-hidden="true">↗</span>
+        </a>
       </section>
 
       <footer className="site-footer">
