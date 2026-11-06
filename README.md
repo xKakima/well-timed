@@ -1,8 +1,8 @@
 # Well Timed Collective
 
 A web-first foundation for the Well Timed Collective watch auction and consignment marketplace.
-The current release includes a public watch catalog and an invite-only
-administrator area for managing listings. Bidding, customer accounts, inquiry
+The homepage is the public watch catalog, with an invite-only administrator area
+for managing listings. Bidding, customer accounts, inquiry
 submissions, and consignment workflows are not connected yet.
 
 ## Requirements

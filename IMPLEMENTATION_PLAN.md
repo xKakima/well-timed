@@ -4,7 +4,7 @@ This is a working plan for building the platform in small, verifiable phases. An
 
 ## Project status
 
-- Repository: Next.js landing page, public watch catalog, and first admin listing CMS slice.
+- Repository: Next.js public watch catalog homepage and first admin listing CMS slice.
 - Current phase: Phase 1 Supabase integration and Phase 2 catalog are in progress; migration must still be applied to the hosted project.
 - Initial target: responsive web MVP.
 - Deployment direction: Vercel for the Next.js app; Supabase for database, authentication, storage, and realtime.
@@ -152,6 +152,7 @@ Record each decision here before implementing its dependent feature. Proposed de
 **Goal:** let visitors discover approved watches through fast, indexable pages.
 
 - [x] Build the responsive public watch catalog with empty and error states.
+- [x] Make the public watch catalog the site homepage; keep `/watches` as a compatible alias.
 - [x] Build an invite-only admin sign-in and listing CMS to create drafts, edit, publish, unpublish, and archive.
 - [x] Let admins upload and remove up to six private photos per watch; show photos only for published listings.
 - [x] Populate public brand filters from published watch listings and allow admins to add brands through listings.
