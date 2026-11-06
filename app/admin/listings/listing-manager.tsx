@@ -23,6 +23,7 @@ type ListingPhotoPreview = WatchListingImage & { signedUrl: string | null };
 
 export default function ListingManager() {
   const router = useRouter();
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const [listings, setListings] = useState<WatchListing[]>([]);
   const [editing, setEditing] = useState<WatchListing | null>(null);
@@ -30,9 +31,21 @@ export default function ListingManager() {
   const [removedPhotoIds, setRemovedPhotoIds] = useState<string[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [loadingPhotos, setLoadingPhotos] = useState(false);
+  const [formOpen, setFormOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    if (formOpen && !dialog.open) {
+      dialog.showModal();
+    } else if (!formOpen && dialog.open) {
+      dialog.close();
+    }
+  }, [formOpen]);
 
   useEffect(() => {
     let active = true;
@@ -118,6 +131,17 @@ export default function ListingManager() {
     setRemovedPhotoIds([]);
     setSelectedFiles([]);
     setMessage("");
+    setFormOpen(true);
+  }
+
+  function closeListingForm() {
+    if (saving) return;
+    setFormOpen(false);
+    setEditing(null);
+    setEditingPhotos([]);
+    setRemovedPhotoIds([]);
+    setSelectedFiles([]);
+    setMessage("");
   }
 
   async function startEditingListing(listing: WatchListing) {
@@ -126,6 +150,7 @@ export default function ListingManager() {
     setRemovedPhotoIds([]);
     setSelectedFiles([]);
     setMessage("");
+    setFormOpen(true);
     setLoadingPhotos(true);
 
     try {
@@ -330,6 +355,7 @@ export default function ListingManager() {
 
       formRef.current?.reset();
       setEditing(null);
+      setFormOpen(false);
       setEditingPhotos([]);
       setRemovedPhotoIds([]);
       setSelectedFiles([]);
@@ -397,190 +423,16 @@ export default function ListingManager() {
         <p className="eyebrow">Administrator</p>
         <h1>Watch listings</h1>
         <p className="admin-intro">
-          Create drafts, review details, and publish listings to the public collection.
+          Manage your watch collection and choose which listings are public.
         </p>
 
-        <section aria-labelledby="listing-form-title" className="admin-panel">
-          <h2 id="listing-form-title">{editing ? "Edit listing" : "Create a listing"}</h2>
-          <form
-            className="admin-form listing-form"
-            key={editing?.id ?? "new"}
-            onSubmit={handleSave}
-            ref={formRef}
-          >
-            <label htmlFor="listing-title">Listing title</label>
-            <input
-              defaultValue={editing?.title ?? ""}
-              id="listing-title"
-              maxLength={120}
-              minLength={2}
-              name="title"
-              required
-            />
-            <div className="form-row">
-              <div>
-                <label htmlFor="listing-brand">Brand</label>
-                <input
-                  defaultValue={editing?.brand ?? ""}
-                  id="listing-brand"
-                  maxLength={80}
-                  minLength={2}
-                  name="brand"
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="listing-model">Model</label>
-                <input
-                  defaultValue={editing?.model ?? ""}
-                  id="listing-model"
-                  maxLength={100}
-                  name="model"
-                  required
-                />
-              </div>
-            </div>
-            <div className="form-row">
-              <div>
-                <label htmlFor="listing-reference">Reference number</label>
-                <input
-                  defaultValue={editing?.reference_number ?? ""}
-                  id="listing-reference"
-                  maxLength={80}
-                  name="reference_number"
-                />
-              </div>
-              <div>
-                <label htmlFor="listing-year">Year</label>
-                <input
-                  defaultValue={editing?.year ?? ""}
-                  id="listing-year"
-                  max={2200}
-                  min={1800}
-                  name="year"
-                  type="number"
-                />
-              </div>
-            </div>
-            <label htmlFor="listing-condition">Condition</label>
-            <input
-              defaultValue={editing?.condition ?? ""}
-              id="listing-condition"
-              maxLength={100}
-              minLength={2}
-              name="condition"
-              required
-            />
-            <label htmlFor="listing-description">Description</label>
-            <textarea
-              defaultValue={editing?.description ?? ""}
-              id="listing-description"
-              maxLength={5000}
-              name="description"
-              required
-              rows={5}
-            />
-            <div className="form-actions">
-              <button className="button-primary" disabled={saving || loadingPhotos} type="submit">
-                {saving ? "Saving…" : editing ? "Save changes" : "Save as draft"}
-              </button>
-              {editing && (
-                <button
-                  className="button-secondary"
-                  onClick={startNewListing}
-                  type="button"
-                >
-                  Cancel edit
-                </button>
-              )}
-            </div>
-            <section aria-labelledby="listing-photos-title" className="listing-photo-editor">
-              <h3 id="listing-photos-title">Listing photos</h3>
-              <p>Upload up to 6 JPEG, PNG, or WebP images, 5 MB each.</p>
-              {loadingPhotos ? (
-                <p role="status">Loading current photos…</p>
-              ) : editingPhotos.length > 0 ? (
-                <div className="admin-photo-grid">
-                  {editingPhotos.map((photo) => {
-                    const isRemoved = removedPhotoIds.includes(photo.id);
-                    return (
-                      <div
-                        className={`admin-photo${isRemoved ? " admin-photo-removed" : ""}`}
-                        key={photo.id}
-                      >
-                        {photo.signedUrl ? (
-                          <Image
-                            alt={photo.alt_text}
-                            height={120}
-                            src={photo.signedUrl}
-                            unoptimized
-                            width={160}
-                          />
-                        ) : (
-                          <div className="admin-photo-missing">Preview unavailable</div>
-                        )}
-                        <button
-                          className="text-button"
-                          onClick={() =>
-                            setRemovedPhotoIds((current) =>
-                              isRemoved
-                                ? current.filter((id) => id !== photo.id)
-                                : [...current, photo.id],
-                            )
-                          }
-                          type="button"
-                        >
-                          {isRemoved ? "Keep photo" : "Remove"}
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : editing ? (
-                <p>No photos uploaded for this listing yet.</p>
-              ) : (
-                <p>Photos are private until the listing is published.</p>
-              )}
-              <>
-                <label htmlFor="listing-photos">Add photos</label>
-                <input
-                  accept="image/jpeg,image/png,image/webp"
-                  disabled={loadingPhotos}
-                  id="listing-photos"
-                  multiple
-                  onChange={(event) => {
-                    setSelectedFiles(Array.from(event.target.files ?? []));
-                    setMessage("");
-                  }}
-                  type="file"
-                />
-                {selectedFiles.length > 0 && (
-                  <ul className="selected-photo-list">
-                    {selectedFiles.map((file, index) => (
-                      <li key={`${file.name}-${file.lastModified}`}>
-                        <span>{file.name} ({(file.size / (1024 * 1024)).toFixed(2)} MB)</span>
-                        <button
-                          className="text-button"
-                          onClick={() =>
-                            setSelectedFiles((current) =>
-                              current.filter((_, fileIndex) => fileIndex !== index),
-                            )
-                          }
-                          type="button"
-                        >
-                          Remove
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </>
-            </section>
-          </form>
-        </section>
-
         <section aria-labelledby="listing-list-title" className="managed-listings">
-          <h2 id="listing-list-title">All listings</h2>
+          <div className="managed-listings-header">
+            <h2 id="listing-list-title">All listings</h2>
+            <button className="button-primary" onClick={startNewListing} type="button">
+              Add a watch
+            </button>
+          </div>
           {message && <p className="form-message" role="status">{message}</p>}
           {listings.length === 0 ? (
             <p className="notice">No listings yet. Create a draft to get started.</p>
@@ -638,6 +490,208 @@ export default function ListingManager() {
           )}
         </section>
       </div>
+      <dialog
+        aria-labelledby="listing-form-title"
+        className="listing-dialog"
+        onCancel={(event) => {
+          event.preventDefault();
+          closeListingForm();
+        }}
+        onClick={(event) => {
+          if (event.target === event.currentTarget) closeListingForm();
+        }}
+        ref={dialogRef}
+      >
+        <div className="listing-dialog-header">
+          <div>
+            <p className="eyebrow">Watch details</p>
+            <h2 id="listing-form-title">{editing ? "Edit listing" : "Add a watch"}</h2>
+          </div>
+          <button
+            aria-label="Close listing form"
+            className="dialog-close"
+            disabled={saving}
+            onClick={closeListingForm}
+            type="button"
+          >
+            ×
+          </button>
+        </div>
+        {message && <p className="form-message" role="alert">{message}</p>}
+        <form
+          className="admin-form listing-form"
+          key={editing?.id ?? (formOpen ? "new" : "closed")}
+          onSubmit={handleSave}
+          ref={formRef}
+        >
+          <label htmlFor="listing-title">Listing title</label>
+          <input
+            autoFocus
+            defaultValue={editing?.title ?? ""}
+            id="listing-title"
+            maxLength={120}
+            minLength={2}
+            name="title"
+            required
+          />
+          <div className="form-row">
+            <div>
+              <label htmlFor="listing-brand">Brand</label>
+              <input
+                defaultValue={editing?.brand ?? ""}
+                id="listing-brand"
+                maxLength={80}
+                minLength={2}
+                name="brand"
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="listing-model">Model</label>
+              <input
+                defaultValue={editing?.model ?? ""}
+                id="listing-model"
+                maxLength={100}
+                name="model"
+                required
+              />
+            </div>
+          </div>
+          <div className="form-row">
+            <div>
+              <label htmlFor="listing-reference">Reference number</label>
+              <input
+                defaultValue={editing?.reference_number ?? ""}
+                id="listing-reference"
+                maxLength={80}
+                name="reference_number"
+              />
+            </div>
+            <div>
+              <label htmlFor="listing-year">Year</label>
+              <input
+                defaultValue={editing?.year ?? ""}
+                id="listing-year"
+                max={2200}
+                min={1800}
+                name="year"
+                type="number"
+              />
+            </div>
+          </div>
+          <label htmlFor="listing-condition">Condition</label>
+          <input
+            defaultValue={editing?.condition ?? ""}
+            id="listing-condition"
+            maxLength={100}
+            minLength={2}
+            name="condition"
+            required
+          />
+          <label htmlFor="listing-description">Description</label>
+          <textarea
+            defaultValue={editing?.description ?? ""}
+            id="listing-description"
+            maxLength={5000}
+            name="description"
+            required
+            rows={5}
+          />
+          <section aria-labelledby="listing-photos-title" className="listing-photo-editor">
+            <h3 id="listing-photos-title">Listing photos</h3>
+            <p>Upload up to 6 JPEG, PNG, or WebP images, 5 MB each.</p>
+            {loadingPhotos ? (
+              <p role="status">Loading current photos…</p>
+            ) : editingPhotos.length > 0 ? (
+              <div className="admin-photo-grid">
+                {editingPhotos.map((photo) => {
+                  const isRemoved = removedPhotoIds.includes(photo.id);
+                  return (
+                    <div
+                      className={`admin-photo${isRemoved ? " admin-photo-removed" : ""}`}
+                      key={photo.id}
+                    >
+                      {photo.signedUrl ? (
+                        <Image
+                          alt={photo.alt_text}
+                          height={120}
+                          src={photo.signedUrl}
+                          unoptimized
+                          width={160}
+                        />
+                      ) : (
+                        <div className="admin-photo-missing">Preview unavailable</div>
+                      )}
+                      <button
+                        className="text-button"
+                        onClick={() =>
+                          setRemovedPhotoIds((current) =>
+                            isRemoved
+                              ? current.filter((id) => id !== photo.id)
+                              : [...current, photo.id],
+                          )
+                        }
+                        type="button"
+                      >
+                        {isRemoved ? "Keep photo" : "Remove"}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : editing ? (
+              <p>No photos uploaded for this listing yet.</p>
+            ) : (
+              <p>Photos are private until the listing is published.</p>
+            )}
+            <label htmlFor="listing-photos">Add photos</label>
+            <input
+              accept="image/jpeg,image/png,image/webp"
+              disabled={loadingPhotos}
+              id="listing-photos"
+              multiple
+              onChange={(event) => {
+                setSelectedFiles(Array.from(event.target.files ?? []));
+                setMessage("");
+              }}
+              type="file"
+            />
+            {selectedFiles.length > 0 && (
+              <ul className="selected-photo-list">
+                {selectedFiles.map((file, index) => (
+                  <li key={`${file.name}-${file.lastModified}`}>
+                    <span>{file.name} ({(file.size / (1024 * 1024)).toFixed(2)} MB)</span>
+                    <button
+                      className="text-button"
+                      onClick={() =>
+                        setSelectedFiles((current) =>
+                          current.filter((_, fileIndex) => fileIndex !== index),
+                        )
+                      }
+                      type="button"
+                    >
+                      Remove
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+          <div className="form-actions listing-dialog-actions">
+            <button className="button-primary" disabled={saving || loadingPhotos} type="submit">
+              {saving ? "Saving…" : editing ? "Save changes" : "Create draft"}
+            </button>
+            <button
+              className="button-secondary"
+              disabled={saving}
+              onClick={closeListingForm}
+              type="button"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </dialog>
     </main>
   );
 }

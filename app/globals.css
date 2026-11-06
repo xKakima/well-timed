@@ -751,6 +751,13 @@ select:focus-visible {
   max-width: 760px;
 }
 
+.managed-listings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
 .managed-listings {
   margin-top: 62px;
 }
@@ -801,6 +808,72 @@ select:focus-visible {
   font-size: 11px;
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+
+.listing-dialog {
+  width: min(720px, calc(100% - 32px));
+  max-width: none;
+  max-height: calc(100dvh - 40px);
+  margin: auto;
+  padding: 28px;
+  overflow: auto;
+  border: 1px solid var(--line);
+  background: var(--paper-light);
+  color: var(--ink);
+}
+
+.listing-dialog::backdrop {
+  background: rgba(25, 26, 23, 0.62);
+  backdrop-filter: blur(2px);
+}
+
+.listing-dialog-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.listing-dialog-header .eyebrow {
+  margin-bottom: 8px;
+}
+
+.listing-dialog-header h2 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(30px, 5vw, 42px);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+}
+
+.dialog-close {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.listing-dialog .admin-form {
+  margin-top: 20px;
+}
+
+.listing-dialog-actions {
+  position: sticky;
+  bottom: -28px;
+  margin: 12px -28px -28px;
+  padding: 16px 28px;
+  border-top: 1px solid var(--line);
+  background: var(--paper-light);
 }
 
 @media (min-width: 1600px) {
@@ -1036,6 +1109,22 @@ select:focus-visible {
 
   .admin-header .back-link {
     margin-bottom: 42px;
+  }
+
+  .listing-dialog {
+    width: calc(100% - 24px);
+    max-height: calc(100dvh - 24px);
+    padding: 21px;
+  }
+
+  .listing-dialog-actions {
+    bottom: -21px;
+    margin: 12px -21px -21px;
+    padding: 14px 21px;
+  }
+
+  .managed-listings-header {
+    align-items: flex-start;
   }
 }
 
